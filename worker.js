@@ -26,7 +26,7 @@ async function handleApi(request, env, url) {
   const path = url.pathname.replace(/^\/api\/?/, "").replace(/\/+$/, "");
 
   if (request.method === "GET" && path === "products") {
-    const result = await db.prepare("SELECT * FROM products ORDER BY name").all();
+    const { results } = await db.prepare("SELECT * FROM products ORDER BY product_name").all();
     return json({products: result.results || []});
   }
 
