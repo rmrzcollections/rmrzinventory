@@ -1,6 +1,10 @@
 name = "rmrzinventory"
+main = "worker.js"
 compatibility_date = "2026-09-15"
-pages_build_output_dir = "."
+
+[assets]
+directory = "./assets"
+binding = "ASSETS"
 
 [[d1_databases]]
 binding = "DB"
