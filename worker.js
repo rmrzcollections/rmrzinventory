@@ -27,7 +27,7 @@ async function handleApi(request, env, url) {
 
   if (request.method === "GET" && path === "products") {
     const { results } = await db.prepare("SELECT * FROM products ORDER BY product_name").all();
-    return json({products: result.results || []});
+    return json({ products: results || [] });
   }
 
   if (request.method === "POST" && path === "products") {
