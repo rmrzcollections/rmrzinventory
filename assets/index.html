@@ -1,36 +1,22 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RMRZ Inventory</title>
-<link rel="stylesheet" href="style.css">
-<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
-</head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Rmrz Collections - Inventory</title>
+<link rel="stylesheet" href="style.css"><script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script></head>
 <body>
-<header><h1>RMRZ Inventory</h1><span id="status">Connecting…</span></header>
-<main>
-<section class="card">
-<h2>Add / Update Product</h2>
-<form id="productForm">
-<input type="hidden" id="productId">
-<label>Barcode <input id="barcode" required></label>
-<label>Product name <input id="name" required></label>
-<label>Price <input id="price" type="number" step="0.01" min="0"></label>
-<label>Stock <input id="stock" type="number" min="0" value="0"></label>
-<div class="buttons"><button type="submit">Save product</button><button type="button" id="clearBtn">Clear</button></div>
-</form>
-</section>
-<section class="card">
-<div class="toolbar"><h2>Products</h2><input id="search" placeholder="Search name or barcode"></div>
-<div id="message"></div>
-<div class="tableWrap"><table><thead><tr><th>Barcode</th><th>Product</th><th>Price</th><th>Stock</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></div>
-</section>
-</main>
-<dialog id="labelDialog">
-<div class="label"><div id="labelName"></div><svg id="barcodeSvg"></svg></div>
-<div class="dialogButtons"><button id="printBtn">Print label</button><button id="closeBtn">Close</button></div>
-</dialog>
-<script src="app.js"></script>
-</body>
-</html>
+<div id="app" class="shell">
+<aside class="sidebar"><div class="brand">📦 <b>Rmrz<br>Collections -<br>Inventory</b></div><div class="usercard"><strong>Administrator</strong><span>ADMIN — Full Access</span></div>
+<nav>
+<button data-page="dashboard" class="nav active">Dashboard</button><button data-page="stockin" class="nav in">📥 Stock IN</button><button data-page="stockout" class="nav out">📤 Stock OUT</button><button data-page="voidout" class="nav">↩️ Void Stock OUT</button><button data-page="products" class="nav">Products</button><button data-page="inventory" class="nav">Inventory</button><button data-page="history" class="nav">History</button><button data-page="sales" class="nav">📈 Daily Sales Report</button><button data-page="labels" class="nav">🖨 Print Barcode Labels</button></nav>
+<div class="sidebottom"><button data-page="password" class="nav change">🔑 Change Password</button><button id="logout" class="nav logout">Log out</button></div></aside>
+<main class="main"><div id="toast" class="toast"></div><section id="page-dashboard" class="page active"><h1>Dashboard</h1><p class="sub">Rmrz Collections - Inventory management</p><div class="stats"><div><span>Products</span><b id="statProducts">0</b></div><div><span>Units in Stock</span><b id="statUnits">0</b></div><div><span>Low Stock</span><b id="statLow">0</b></div><div><span>Out of Stock</span><b id="statOut">0</b></div></div></section>
+<section id="page-products" class="page"><div class="titleRow"><div><h1>Products</h1><p class="sub">Manage your product master and existing barcodes.</p></div><button class="primary" id="newProduct">+ Add Product</button></div><div class="card"><input id="productSearch" class="search" placeholder="Search product, barcode or SKU"><div class="tableWrap"><table><thead><tr><th>Barcode</th><th>SKU</th><th>Product Name</th><th>Category</th><th>Unit</th><th>Beginning Stock</th><th>Reorder</th><th>Unit Cost</th><th>Action</th></tr></thead><tbody id="productRows"></tbody></table></div></div></section>
+<section id="page-inventory" class="page"><h1>Inventory</h1><p class="sub">Current stock overview.</p><div class="card"><div class="tableWrap"><table><thead><tr><th>Barcode</th><th>Product</th><th>SKU</th><th>Category</th><th>Beginning</th><th>Total IN</th><th>Total OUT</th><th>Current Stock</th><th>Status</th></tr></thead><tbody id="inventoryRows"></tbody></table></div></div></section>
+<section id="page-stockin" class="page"><h1>Stock IN</h1><p class="sub">Receive incoming inventory.</p><div class="card formgrid"><label>Barcode<input id="inBarcode" inputmode="numeric"></label><label>Quantity<input id="inQty" type="number" min="1" value="1"></label><label>Reference<input id="inRef"></label><label>Notes<input id="inNotes"></label><div class="full"><div id="inProduct" class="hint">Scan or enter an existing barcode.</div><button class="primary" id="recordIn">Record Stock IN</button></div></div></section>
+<section id="page-stockout" class="page"><h1>Stock OUT</h1><p class="sub">Release inventory from stock.</p><div class="card formgrid"><label>Barcode<input id="outBarcode" inputmode="numeric"></label><label>Quantity<input id="outQty" type="number" min="1" value="1"></label><label>Reference<input id="outRef"></label><label>Notes<input id="outNotes"></label><div class="full"><div id="outProduct" class="hint">Scan or enter an existing barcode.</div><button class="danger" id="recordOut">Record Stock OUT</button></div></div></section>
+<section id="page-voidout" class="page"><h1>Void Stock OUT</h1><p class="sub">Reverse a previous stock OUT transaction.</p><div class="card"><div id="voidRows"></div></div></section>
+<section id="page-history" class="page"><h1>History</h1><p class="sub">Inventory movement history.</p><div class="card"><div class="tableWrap"><table><thead><tr><th>Date</th><th>Type</th><th>Barcode</th><th>Product</th><th>Qty</th><th>Reference</th><th>Notes</th></tr></thead><tbody id="historyRows"></tbody></table></div></div></section>
+<section id="page-sales" class="page"><h1>Daily Sales Report</h1><p class="sub">Summary of stock OUT activity by date.</p><div class="card"><label>Date <input type="date" id="salesDate"></label><div id="salesSummary" class="salesSummary"></div></div></section>
+<section id="page-labels" class="page"><div class="titleRow"><div><h1>Print Barcode Labels</h1><p class="sub">Print barcode labels with product name. Each label is 50 mm (width) × 30 mm (length).</p></div></div><div class="labelLayout"><div class="card controls"><h3>Select Products</h3><label class="radio"><input type="radio" name="sel" value="all" checked> All Products</label><label class="radio"><input type="radio" name="sel" value="category"> By Category</label><select id="labelCategory"><option value="">Select Category</option></select><label class="radio"><input type="radio" name="sel" value="search"> Search Product</label><input id="labelSearch" placeholder="Enter product name, barcode or SKU"><label class="radio"><input type="radio" name="sel" value="specific"> Select Specific Products</label><div class="labelSpecific" id="specificList"></div><h3>Label Settings</h3><label>Label Size<select id="labelSize"><option value="50x30">50 mm (W) × 30 mm (L)</option><option value="40x20">40 mm (W) × 20 mm (L)</option></select></label><label>Copies per Product<input id="labelCopies" type="number" min="1" value="1"></label><h3>Print Options</h3><label class="radio"><input id="showName" type="checkbox" checked> Show Product Name</label><label class="radio"><input id="showBarcode" type="checkbox" checked> Show Barcode</label><button class="primary" id="generateLabels">🖨 Generate Labels</button><button class="secondary" id="resetLabels">↻ Reset</button></div><div class="card preview"><h3>Label Preview</h3><p class="muted">Each label size: <span id="previewSize">50 mm (W) × 30 mm (L)</span></p><div id="labelPreview" class="labelGrid"></div></div><div class="card info"><h3>Label Size (50 mm × 30 mm)</h3><div class="measureBox"><span>50 mm</span><div class="sampleLabel"><div>Product Name</div><div class="fakebars"></div><small>123456789012</small></div><span>30 mm</span></div><div class="tips">ⓘ <b>Printing Tips</b><br>• Use your 50 × 30 mm sticker paper.<br>• Print at 100% / Actual Size.<br>• Enable label printer centering if available.</div></div></div></section>
+<section id="page-password" class="page"><h1>Change Password</h1><p class="sub">Change the administrator password used by this browser.</p><div class="card formgrid"><label>Current Password<input id="currentPwd" type="password"></label><label>New Password<input id="newPwd" type="password"></label><label>Confirm Password<input id="confirmPwd" type="password"></label><div class="full"><button class="primary" id="savePwd">Save Password</button></div></div></section>
+</main></div>
+<dialog id="productDialog"><form method="dialog" id="productForm"><h2 id="dialogTitle">Add Product</h2><input type="hidden" id="pid"><div class="formgrid"><label>Barcode<input id="pbarcode" required></label><label>SKU<input id="psku"></label><label>Product Name<input id="pname" required></label><label>Category<input id="pcategory"></label><label>Unit<input id="punit" value="pcs" required></label><label>Beginning Stock<input id="pbegin" type="number" min="0" value="0" required></label><label>Reorder Level<input id="preorder" type="number" min="0" value="0" required></label><label>Unit Cost<input id="pcost" type="number" min="0" step="0.01" value="0" required></label><div class="full"><button class="primary" value="default" id="saveProduct">Save Product</button><button class="secondary" value="cancel">Cancel</button></div></div></form></dialog>
+<script src="app.js"></script></body></html>
