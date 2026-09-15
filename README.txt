@@ -14,3 +14,4 @@ IMPORTANT:
 3. The database itself remains on Cloudflare D1; this package only configures the binding and API.
 4. After pushing to GitHub, let Cloudflare Pages deploy. Do not delete/recreate the D1 database.
 5. The label print CSS is 50 mm × 30 mm and prints only the label.
+Cloudflare D1 setup
