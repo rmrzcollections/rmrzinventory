@@ -1,10 +1,8 @@
-RMRZ Inventory restored-style package for Cloudflare Workers + D1.
+RMRZ Collections - Inventory
+Restored/rebuilt interface matching the supplied original screenshot, with Cloudflare Workers + D1 connection.
 
-This package recreates the original dashboard layout from the saved reference and keeps the working D1 binding:
-DB -> rmrzinventory-db
+Worker deploy command: npx wrangler deploy
+D1 binding: DB -> rmrzinventory-db
 
-Worker entry point: worker.js
-Assets directory: ./assets
-Deploy command: npx wrangler deploy
-
-The products API is wired to the verified products schema. Stock movement history/sales writing is intentionally not guessed because the stock_movements column schema has not yet been verified.
+IMPORTANT: replace the current website files in GitHub with this package as a whole.
+Keep worker.js and wrangler.toml at repository root, and keep index.html/style.css/app.js inside assets/.
