@@ -32,7 +32,7 @@ async function handleApi(request, env, url) {
 
   if (request.method === "POST" && path === "products") {
     const body = await request.json();
-    if (!body.barcode || !body.name) {
+    if (!body.barcode || !(body.product_name || body.name)) {
       return json({error:"Barcode and product name are required."}, 400);
     }
 
@@ -49,7 +49,7 @@ async function handleApi(request, env, url) {
     };
 
     add("barcode", String(body.barcode).trim());
-    add("name", String(body.name).trim());
+    add("product_name", String(b.product_name || b.name || "").trim());
     add("price", Number(body.price || 0));
     add("stock", Number(body.stock || 0));
 
@@ -86,7 +86,7 @@ async function handleApi(request, env, url) {
       };
 
       set("barcode", String(body.barcode ?? "").trim());
-      set("name", String(body.name ?? "").trim());
+      set("product_name", String(b.product_name ?? b.name ?? "").trim());
       set("price", Number(body.price || 0));
       set("stock", Number(body.stock || 0));
       set("updated_at", new Date().toISOString());
