@@ -1,0 +1,8 @@
+name = "rmrzinventory"
+compatibility_date = "2026-09-15"
+pages_build_output_dir = "."
+
+[[d1_databases]]
+binding = "DB"
+database_name = "rmrzinventory-db"
+database_id = "7c523387-2cbb-4a81-9840-6508d9058c27"

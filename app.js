@@ -1,0 +1,13 @@
+const $=id=>document.getElementById(id);
+let products=[];
+async function api(path,opts={}){const r=await fetch('/api'+path,{headers:{'Content-Type':'application/json',...(opts.headers||{})},...opts});let d={};try{d=await r.json()}catch{}if(!r.ok)throw new Error(d.error||`HTTP ${r.status}`);return d}
+function msg(t,ok=false){$('message').textContent=t;$('message').className=ok?'ok':'err'}
+function clearForm(){$('productId').value='';$('barcode').value='';$('name').value='';$('price').value='';$('stock').value='0'}
+function render(){const q=$('search').value.toLowerCase();const list=products.filter(p=>String(p.barcode??'').toLowerCase().includes(q)||String(p.name??'').toLowerCase().includes(q));$('rows').innerHTML=list.map(p=>`<tr><td>${esc(p.barcode)}</td><td>${esc(p.name)}</td><td>${Number(p.price||0).toFixed(2)}</td><td>${p.stock??0}</td><td class="actions"><button onclick="editProduct(${p.id})">Edit</button><button onclick="showLabel(${p.id})">Label</button></td></tr>`).join('')}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+async function load(){try{const d=await api('/products');products=d.products||[];render();$('status').textContent='D1 connected';$('status').className='ok'}catch(e){$('status').textContent='Connection error';msg(e.message)}}
+$('productForm').addEventListener('submit',async e=>{e.preventDefault();const id=$('productId').value;const body={barcode:$('barcode').value.trim(),name:$('name').value.trim(),price:Number($('price').value||0),stock:Number($('stock').value||0)};try{await api(id?`/products/${id}`:'/products',{method:id?'PUT':'POST',body:JSON.stringify(body)});msg('Product saved.',true);clearForm();load()}catch(e){msg(e.message)}})
+$('clearBtn').onclick=clearForm;$('search').oninput=render;
+window.editProduct=id=>{const p=products.find(x=>x.id==id);if(!p)return;$('productId').value=p.id;$('barcode').value=p.barcode||'';$('name').value=p.name||'';$('price').value=p.price||0;$('stock').value=p.stock||0;scrollTo({top:0,behavior:'smooth'})}
+window.showLabel=id=>{const p=products.find(x=>x.id==id);if(!p)return;$('labelName').textContent=p.name||'';JsBarcode('#barcodeSvg',String(p.barcode||''),{format:'auto',displayValue:true,fontSize:9,height:42,margin:0});$('labelDialog').showModal()}
+$('closeBtn').onclick=()=>$('labelDialog').close();$('printBtn').onclick=()=>window.print();load();
